@@ -17,8 +17,8 @@ apply plugin: 'idea'
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 
-group 'org.ermadan'
-version '0.0.1'
+group 'org.ballaci'
+version '1.0.0'
 
 apply plugin: 'kotlin'
 

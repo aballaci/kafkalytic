@@ -1,11 +1,12 @@
 <idea-plugin>
-    <id>org.ermadan.kafkalytic</id>
-    <name>Kafkalytic</name>
-    <vendor email="danila.ermakov@gmail.com">Danila Ermakov</vendor>
+    <id>org.ballaci.kafkalytic</id>
+    <name>AB Kafkalytic</name>
+    <vendor email="aballaci@gmail.com">Armand Ballaci</vendor>
 
     <description>
         &lt;h4&gt;Kafka analysis tool:&lt;/h4&gt;
         &lt;ul&gt;
+        &lt;li&gt;Sasl Authentication&lt;/li&gt;
         &lt;li&gt;Multiple clusters support&lt;/li&gt;
         &lt;li&gt;Topics management: create/delete/change partitions&lt;/li&gt;
         &lt;li&gt;Display system topics&lt;/li&gt;
@@ -34,6 +35,7 @@
     </extensions>
 
     <change-notes>
+        added sasl authentication options
         _ is allowed in domain name,
         scroll visible tree frame to matching topic
     </change-notes>
