@@ -30,7 +30,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="org.kafkalytic.plugin.KafkaStateComponent"/>
 
-        <toolWindow id="kafkalytic" anchor="right" factoryClass="org.kafkalytic.plugin.KafkalyticToolWindowFactory"/>
+        <toolWindow id="kafkalytic ab" anchor="right" factoryClass="org.kafkalytic.plugin.KafkalyticToolWindowFactory"/>
     </extensions>
 
     <change-notes>

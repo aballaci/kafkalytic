@@ -40,6 +40,9 @@ class CreateClusterDialog(val project: Project) : Messages.InputDialog(
     private lateinit var trustPassword: JTextField
     private lateinit var keyPassword: JTextField
     private lateinit var requestTimeout: JTextField
+    private lateinit var jaasConfig: JTextField
+    private lateinit var saslMechanism: JTextField
+    private lateinit var securityProtocol: JTextField
 
 
     override fun createMessagePanel(): JPanel {
@@ -79,7 +82,7 @@ class CreateClusterDialog(val project: Project) : Messages.InputDialog(
                 props.getProperty("ssl.keystore.password")?.let { keyPassword.text = it }
             }
         }
-        name = JTextField()
+        name = JTextField("dev")
         val subPanel = JPanel(BorderLayout())
         subPanel.add(layoutLR(JLabel("Cluster name (optional)"), name), BorderLayout.NORTH)
         val certSubPanel = JPanel(GridLayout(0, 2))
@@ -88,12 +91,18 @@ class CreateClusterDialog(val project: Project) : Messages.InputDialog(
         trustPassword = JTextField()
         keyPassword = JTextField()
         requestTimeout = JTextField("5000")
+        jaasConfig = JTextField("org.apache.kafka.common.security.plain.PlainLoginModule required username=\"user\" password=\"password\";")
+        saslMechanism = JTextField("PLAIN")
+        securityProtocol = JTextField("SASL_PLAINTEXT")
         requestTimeout.inputVerifier = INT_VERIFIER
         certSubPanel.addLabelled("Truststore path", trustPath)
         certSubPanel.addLabelled("Truststore password", trustPassword)
         certSubPanel.addLabelled("Keystore path", keyPath)
         certSubPanel.addLabelled("Keystore password", keyPassword)
         certSubPanel.addLabelled("Request timeout, ms", requestTimeout)
+        certSubPanel.addLabelled("Jaas Config", jaasConfig)
+        certSubPanel.addLabelled("SASL Mechanism", saslMechanism)
+        certSubPanel.addLabelled("Security Protocol", securityProtocol)
         subPanel.add(certSubPanel, BorderLayout.CENTER)
         subPanel.add(layoutUD(browse, JBTable(tableModel), testConnection), BorderLayout.SOUTH)
 
@@ -110,6 +119,11 @@ class CreateClusterDialog(val project: Project) : Messages.InputDialog(
         props.put("name", name.text.ifBlank { props["bootstrap.servers"]!! })
         if (requestTimeout.text.isNotBlank()) {
             props.put("request.timeout.ms", requestTimeout.text)
+        }
+        if (jaasConfig.text.isNotBlank()) {
+            props.put("sasl.jaas.config", jaasConfig.text)
+            props.put("sasl.mechanism", saslMechanism.text)
+            props.put("security.protocol", securityProtocol.text)
         }
         if (trustPath.text.isNotBlank()) {
             props.putAll(mapOf(
