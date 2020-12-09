@@ -7,8 +7,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidator
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.table.JBTable
+import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.common.KafkaException
+import org.apache.kafka.common.config.SaslConfigs
+import org.apache.kafka.common.security.plain.PlainLoginModule
 import java.awt.*
 import java.io.FileReader
 import java.io.IOException
@@ -43,6 +46,7 @@ class CreateClusterDialog(val project: Project) : Messages.InputDialog(
     private lateinit var jaasConfig: JTextField
     private lateinit var saslMechanism: JTextField
     private lateinit var securityProtocol: JTextField
+    private lateinit var plainLoginModule: PlainLoginModule
 
 
     override fun createMessagePanel(): JPanel {
@@ -52,6 +56,7 @@ class CreateClusterDialog(val project: Project) : Messages.InputDialog(
             messagePanel.add(textComponent, BorderLayout.NORTH)
         }
 
+        plainLoginModule  = PlainLoginModule()
         tableModel = DefaultTableModel()
         tableModel.addColumn("Property")
         tableModel.addColumn("Value")
@@ -62,6 +67,8 @@ class CreateClusterDialog(val project: Project) : Messages.InputDialog(
         val testConnection = JButton("Test connection")
         testConnection.addActionListener {
             try {
+                val current = Thread.currentThread().contextClassLoader
+                Thread.currentThread().setContextClassLoader(current)
                 AdminClient.create(getCluster() as Map<String, Any>).close()
                 info("Connection successful")
             } catch (e: KafkaException) {
@@ -121,9 +128,11 @@ class CreateClusterDialog(val project: Project) : Messages.InputDialog(
             props.put("request.timeout.ms", requestTimeout.text)
         }
         if (jaasConfig.text.isNotBlank()) {
-            props.put("sasl.jaas.config", jaasConfig.text)
-            props.put("sasl.mechanism", saslMechanism.text)
-            props.put("security.protocol", securityProtocol.text)
+//            props.put("sasl.jaas.config", jaasConfig.text)
+            props.put("sasl.jaas.config", "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"user\" password=\"password\";");
+            props.put(SaslConfigs.SASL_MECHANISM, saslMechanism.text)
+            props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol.text)
+//            props.put("sasl.client.callback.handler.class", "org.apache.kafka.common.security.plain.PlainAuthenticateCallback")
         }
         if (trustPath.text.isNotBlank()) {
             props.putAll(mapOf(
